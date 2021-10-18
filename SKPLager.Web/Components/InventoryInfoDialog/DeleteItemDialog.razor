@@ -1,0 +1,16 @@
+﻿@namespace SKPLager.Web.Components
+
+<MatDialog @bind-IsOpen="@OpenDialog" CanBeClosed="false">
+    <MatDialogTitle>
+        Slette @SelectedItem.Item.Brand @SelectedItem.Item.Model
+        <hr />
+    </MatDialogTitle>
+    <MatDialogContent>
+        <p>Er du sikker på at du vil slette</p>
+        <p>@SelectedItem.Item.Brand @SelectedItem.Item.Model</p>
+    </MatDialogContent>
+    <MatDialogActions>
+        <MatButton OnClick="CloseDialog">Annuller</MatButton>
+        <MatButton OnClick="@DeleteItem">Ja</MatButton>
+    </MatDialogActions>
+</MatDialog>

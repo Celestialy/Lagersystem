@@ -1,0 +1,103 @@
+﻿@page "/inventoryManagement"
+@*@attribute [Authorize]*@
+
+<h1>Lageradministration</h1>
+<hr />
+
+<div>
+    @if (departments.Count > 1)
+    {
+        <MatAccordion>
+            @foreach (var department in departments)
+            {
+                <MatExpansionPanel Style="margin-bottom:20px">
+                    <MatExpansionPanelSummary>
+                        <MatExpansionPanelHeader Class="expansionHeader">@department.Name</MatExpansionPanelHeader>
+                    </MatExpansionPanelSummary>
+                    <MatExpansionPanelDetails>
+                        <MatButton Style="float:right; margin-top:10px" Raised="true" OnClick="@(e => { newInventoryDialog = true; })"><span class="material-icons">add</span>&nbsp;Nyt lager</MatButton>
+
+                        <MatTable Items="@pagedOutPutList" class="mat-elevation-z5" ShowPaging="true" UseSortHeaderRow="true" Striped="true" AllowSelection="true" FilterByColumnName="Name" SearchTermFieldLabel="Søg" SearchTermFieldPlaceHolder="Navn">
+                            <MatTableHeader>
+                                <MatSortHeaderRow SortChanged="@SortData">
+                                    <MatSortHeader SortId="name"><span style="width:600px">Navn</span></MatSortHeader>
+                                    <MatSortHeader SortId="type">Type</MatSortHeader>
+                                    <th></th>
+                                </MatSortHeaderRow>
+                            </MatTableHeader>
+                            <MatTableRow>
+                                <td>@context.Name</td>
+                                <td>@context.Type</td>
+                                <td>
+                                    <MatButton Style="align-self:center; margin-right:20px" Raised="true" OnClick="(e => { InventoryInfo(context.Name); })">
+                                        <span class="material-icons">edit</span>&nbsp;Mere
+                                    </MatButton>
+                                    <MatButton Style="align-self:center; background-color:red" Raised="true" OnClick="(e => { selectedInventory = sortedOutPutList.FirstOrDefault(x => x.Id == context.Id); deleteInventoryDialog = true; })">
+                                        <span class="material-icons">delete</span>&nbsp;slet lager
+                                    </MatButton>
+                                </td>
+                            </MatTableRow>
+                        </MatTable>
+                    </MatExpansionPanelDetails>
+                </MatExpansionPanel>
+            }
+        </MatAccordion>
+    }
+    else
+    {
+        <MatButton Style="float:right; margin-top:10px" Raised="true" OnClick="@(e => { newInventoryDialog = true; })"><span class="material-icons">add</span>Nyt lager</MatButton>
+
+        <MatTable Items="@pagedOutPutList" class="mat-elevation-z5" ShowPaging="true" UseSortHeaderRow="true" Striped="true" AllowSelection="true" FilterByColumnName="Name" SearchTermFieldLabel="Søg" SearchTermFieldPlaceHolder="Navn">
+            <MatTableHeader>
+                <MatSortHeaderRow SortChanged="@SortData">
+                    <MatSortHeader SortId="name"><span style="width:600px">Navn</span></MatSortHeader>
+                    <MatSortHeader SortId="type">Type</MatSortHeader>
+                    <th></th>
+                </MatSortHeaderRow>
+            </MatTableHeader>
+            <MatTableRow>
+                <td>@context.Name</td>
+                <td>@context.Type</td>
+                <td>
+                    <MatButton Style="align-self:center; background-color:red" Raised="true" OnClick="(e => { selectedInventory = sortedOutPutList.FirstOrDefault(x => x.Id == context.Id); deleteInventoryDialog = true; })">
+                        <span class="material-icons">delete</span>slet lager
+                    </MatButton>
+                </td>
+            </MatTableRow>
+        </MatTable>
+    }
+</div>
+
+<MatDialog @bind-IsOpen="@newInventoryDialog" CanBeClosed="false">
+    <MatDialogTitle>Nyt Lager</MatDialogTitle>
+    <MatDialogContent>
+        <p>Lager Navn</p>
+        <MatTextField @bind-Value="@newInventoryName" PlaceHolder="Lager Navn"></MatTextField>
+        <br />
+        <br />
+        <MatSelectItem @bind-Value="@newSelectedInventoryType" Items="@inventoryTypes" Label="Lager type"></MatSelectItem>
+    </MatDialogContent>
+    <MatDialogActions>
+        <MatButton OnClick="@(e => { newInventoryDialog = false; newInventoryName = ""; newSelectedInventoryType = ""; })">Annuller</MatButton>
+
+        @if (newInventoryName != "" && newSelectedInventoryType != "")
+        {
+            <MatButton OnClick="@createInventory">Ok</MatButton>
+        }
+        else
+        {
+            <MatButton OnClick="@createInventory" Disabled="true">Ok</MatButton>
+        }
+    </MatDialogActions>
+</MatDialog>
+
+<MatDialog @bind-IsOpen="@deleteInventoryDialog" CanBeClosed="false">
+    <MatDialogTitle>Slet lager</MatDialogTitle>
+    <MatDialogContent>
+        <p>Er du sikker på at du vil slette lageret: @selectedInventory.Name</p>
+    </MatDialogContent>
+    <MatDialogActions>
+        <MatButton OnClick="@(e => { deleteInventoryDialog = false; selectedInventory = new FrontEndInventory(); })">Annuller</MatButton>
+        <MatButton OnClick="(e => { sortedOutPutList = sortedOutPutList.Where(x => x.Id != selectedInventory.Id).ToArray(); deleteInventoryDialog = false; })">Slet</MatButton>
+    </MatDialogActions>
+</MatDialog>

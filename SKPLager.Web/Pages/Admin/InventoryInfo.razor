@@ -1,0 +1,79 @@
+﻿@page "/inventory/{inventoryName}"
+@using SKPLager.Web.Components
+
+<div>
+    <h1 style="display:inline-block; margin:0">@inventoryName</h1>
+    <MatButton Style="float:right; margin-top:6px; margin-bottom:6px;" Raised="true" OnClick="@(e => { newItemDialog = true; dialogName = "Opret ny ting til lager"; })">
+        <span class="material-icons">add</span> Opret ny ting til lager
+    </MatButton>
+</div>
+<hr />
+
+<MatDrawerContainer>
+    <div dir="rtl">
+        <MatDrawer @bind-Opened="@categoryFilterDrawer" Mode="MatDrawerMode.Modal">
+            <div dir="ltr">
+                <MatAutocompleteList Items="@categories" FullWidth="true" NumberOfElementsInPopup="10" ValueChanged="CategorySelectedEvent" TItem="Category" Label="Kategori"></MatAutocompleteList>
+            </div>
+        </MatDrawer>
+    </div>
+    <MatDrawerContent>
+        <MatButton Style="float:right; margin-top:10px;" Raised="true" OnClick="@(e => { categoryFilterDrawer = !categoryFilterDrawer; })"><span class="material-icons">sort</span>&nbsp;Filter</MatButton>
+
+        @if (!hideClearFilterBtn)
+        {
+            <MatButton Style="float:right; margin-top:10px; margin-right:20px;" OnClick="@(e => { outputList = unfilteredList; hideClearFilterBtn = true; SortData(null); })"><span class="material-icons">clear</span>&nbsp;Ryd filter</MatButton>
+        }
+
+        <MatTable Items="@pagedOutPutList" class="mat-elevation-z5" ShowPaging="true" UseSortHeaderRow="true" Striped="true" AllowSelection="true" FilterByColumnName="Brand" SearchTermFieldLabel="Søg efter mærke" SearchTermFieldPlaceHolder="Mærke">
+            <MatTableHeader>
+                <MatSortHeaderRow SortChanged="@SortData">
+                    <th></th>
+                    <MatSortHeader SortId="brand" Style="font-weight:bolder">Mærke</MatSortHeader>
+                    <MatSortHeader SortId="model" Style="font-weight:bolder">Model</MatSortHeader>
+                    <MatSortHeader SortId="category" Style="font-weight:bolder">Kategori</MatSortHeader>
+                    @if (inventoryName.ToLower().Contains("udlån"))
+                    {
+                        <MatSortHeader SortId="currentAmount" Style="font-weight:bolder">Nuværende mængde</MatSortHeader>
+                    }
+                    <MatSortHeader SortId="totalAmount" Style="font-weight:bolder">Total</MatSortHeader>
+                    <th></th>
+                </MatSortHeaderRow>
+            </MatTableHeader>
+            <MatTableRow>
+                <td style="width:75px !important;"><img src="@context.Image" /></td>
+                <td>@context.Brand</td>
+                <td>@context.Model</td>
+                <td>@context.Category</td>
+                @if (inventoryName.ToLower().Contains("udlån"))
+                {
+                    <td style="width:100px !important; text-align:center" class="@((((double)context.Amount/(double)context.TotalAmount) * 100 <= 25) ? "lowOnItems" : "")">@context.Amount</td>
+                }
+                <td style="width:100px !important; text-align:center">@context.TotalAmount</td>
+                <td style="min-width:200px !important;">
+                    <MatButton Class="material-icons" Style="color:dimgray" OnClick="@(e => { OpenEditItemDialog(context); })">edit</MatButton>
+                    <MatButton Class="material-icons" Style="color:dimgray" OnClick="@(e => { OpenDeleteItemDialog(context); })">delete</MatButton>
+                </td>
+                @*<td>
+                        <MatButton Style="align-self:center; margin-right:20px" Raised="true" OnClick="(e => { InventoryInfo(context.Id); })">
+                            <span class="material-icons">edit</span>&nbsp;Mere
+                        </MatButton>
+                        <MatButton Style="align-self:center; background-color:red" Raised="true" OnClick="(e => { selectedInventory = sortedOutPutList.FirstOrDefault(x => x.Id == context.Id); deleteInventoryDialog = true; })">
+                            <span class="material-icons">delete</span>&nbsp;slet lager
+                        </MatButton>
+                    </td>*@
+            </MatTableRow>
+        </MatTable>
+    </MatDrawerContent>
+</MatDrawerContainer>
+
+<NewItemDialog @bind-openDialog="newItemDialog"
+               Categories="categories"
+               DialogName="@dialogName"
+               @bind-SelectedItem="selectedItemDialog"
+               InventoryName="@inventoryName"
+               ItemSubmitted="CreateItem"
+               ItemEdited="EditItem">
+</NewItemDialog>
+
+<DeleteItemDialog SelectedItem="selectedItemDialog" OpenDialog="deleteItemDialog" ItemSubmitted="DeleteItem"></DeleteItemDialog>

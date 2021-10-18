@@ -1,0 +1,129 @@
+﻿@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+
+@inject NavigationManager Navigation
+@inject SignOutSessionStateManager SignOutManager
+
+<ul class="nav flex-column">
+    <li class="nav-item px-3">
+        <NavLink class="nav-link">
+            <span class="material-icons">account_circle</span>&nbsp;<div class="navbar-username">Rasmus Smedegaard Johannesen</div>
+        </NavLink>
+    </li>
+
+    <MatDivider Padded="true"></MatDivider>
+
+    <li class="nav-item px-3">
+        <NavLink @onclick="@(e => { MainLayout.testDrawer = false; })" class="nav-link" href="" Match="NavLinkMatch.All">
+            <span class="material-icons" aria-hidden="true">history</span>&nbsp;Historik
+        </NavLink>
+    </li>
+    <li class="nav-item px-3">
+        <NavLink @onclick="@(e => { MainLayout.testDrawer = false; })" class="nav-link" href="analytics">
+            <span class="material-icons" aria-hidden="true">analytics</span>&nbsp;Statistik
+        </NavLink>
+    </li>
+
+    <MatDivider Padded="true"></MatDivider>
+
+    <li class="nav-item px-3">
+        <NavLink @onclick="@(e => { MainLayout.testDrawer = false; })" class="nav-link" href="inventoryManagement">
+            <span class="material-icons" aria-hidden="true">storage</span>&nbsp;Lageradministration
+        </NavLink>
+    </li>
+    <li class="nav-item px-3">
+        <NavLink @onclick="@(e => { MainLayout.testDrawer = false; })" class="nav-link" href="userHistory">
+            <span class="material-icons" aria-hidden="true">people</span>&nbsp;Brugerhistorik
+        </NavLink>
+    </li>
+
+    <MatDivider Padded="true"></MatDivider>
+
+    <li class="nav-item px-3">
+        <NavLink class="nav-link" @onclick="BeginSignOut">
+            <span class="material-icons" aria-hidden="true">sensor_door</span>&nbsp;Log ud
+        </NavLink>
+    </li>
+</ul>
+
+<!--<div class="top-row pl-4 navbar navbar-dark">
+    <a class="navbar-brand" href="">SKP Lager</a>
+    <button class="navbar-toggler" @onclick="ToggleNavMenu">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+</div>
+
+<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+    <ul class="nav flex-column">
+        <li class="nav-item px-3">-->
+            @*<AuthorizeView>*@
+            @*<Authorized>*@
+            <!--<NavLink class="nav-link">
+                <span class="material-icons">account_circle</span>&nbsp;<div class="navbar-username">Rasmus Smedegaard Johannesen</div>-->
+                @*<span class="material-icons">account_circle</span>&nbsp;<div class="navbar-username">@context.User.Identity.Name</div>*@
+            <!--</NavLink>-->
+            @*</Authorized>*@
+            @*</AuthorizeView>*@
+        <!--</li>
+
+        <MatDivider Padded="true"></MatDivider>
+
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                <span class="material-icons" aria-hidden="true">history</span>&nbsp;Historik
+            </NavLink>
+        </li>-->
+
+        @*<AuthorizeView Roles="Administrator, Instructor">*@
+        <!--<li class="nav-item px-3">
+            <NavLink class="nav-link" href="analytics">
+                <span class="material-icons" aria-hidden="true">analytics</span>&nbsp;Statistik
+            </NavLink>
+        </li>-->
+        @*</AuthorizeView>*@
+
+        <!--<MatDivider Padded="true"></MatDivider>-->
+
+        @*<AuthorizeView Roles="Administrator, Instructor">*@
+        <!--<li class="nav-item px-3">
+            <NavLink class="nav-link" href="inventoryManagement">
+                <span class="material-icons" aria-hidden="true">storage</span>&nbsp;Lageradministration
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="userHistory">
+                <span class="material-icons" aria-hidden="true">people</span>&nbsp;Brugerhistorik
+            </NavLink>
+        </li>-->
+        @*</AuthorizeView>*@
+
+        <!--<MatDivider Padded="true"></MatDivider>-->
+
+        @*<AuthorizeView>
+            <Authorized>*@
+        <!--<li class="nav-item px-3">
+            <NavLink class="nav-link" @onclick="BeginSignOut">
+                <span class="material-icons" aria-hidden="true">sensor_door</span>&nbsp;Log ud
+            </NavLink>
+        </li>-->
+        @*</Authorized>
+            </AuthorizeView>*@
+    <!--</ul>
+</div>-->
+
+@code {
+    private bool collapseNavMenu = true;
+
+    private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+
+    private async Task BeginSignOut(MouseEventArgs args)
+    {
+        await SignOutManager.SetSignOutState();
+        Navigation.NavigateTo("authentication/logout");
+    }
+}

@@ -1,0 +1,38 @@
+﻿@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+
+@inherits LayoutComponentBase
+
+@inject NavigationManager Navigation
+@inject SignOutSessionStateManager SignOutManager
+
+<MatAppBarContainer>
+    <MatAppBar Fixed="true" Style="background-color: #448AFF">
+        <MatAppBarRow>
+            <MatAppBarSection>
+                <MatIconButton Icon="menu" OnClick="@(e => { testDrawer = true; })"></MatIconButton>
+                <a href="">
+                    <img class="bannerImg" src="/Images/Banner.jpg" />
+                </a>
+            </MatAppBarSection>
+            <MatAppBarSection Align="@MatAppBarSectionAlign.End">
+            </MatAppBarSection>
+        </MatAppBarRow>
+    </MatAppBar>
+    <MatAppBarContent>
+        <MatDrawerContainer>
+            <MatDrawer Opened="@testDrawer" Mode="MatDrawerMode.Modal">
+                <div class="sidebar" style="width:100%; overflow:hidden;">
+                    <NavMenu />
+                </div>
+            </MatDrawer>
+        </MatDrawerContainer>
+        <MatAppBarContent>
+            <MatThemeProvider Theme="@MatTheme">
+                <div class="div1">
+                    @Body
+                </div>
+            </MatThemeProvider>
+        </MatAppBarContent>
+    </MatAppBarContent>
+</MatAppBarContainer>
